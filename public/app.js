@@ -81,24 +81,6 @@ const emailDatabase = [
         const btnRegenerate = document.getElementById('btn-regenerate');
         const btnSendReply = document.getElementById('btn-send-reply');
 
-        // Initial Auth Workflows
-        loginBtn.addEventListener('click', () => {
-            loginPage.style.opacity = '0';
-            loginPage.style.transition = 'opacity 0.3s ease';
-            setTimeout(() => {
-                loginPage.classList.add('hidden');
-                appDashboard.classList.remove('hidden');
-                updateUnreadBadge();
-                renderEmailList();
-                if(emailDatabase.length > 0) selectEmail(emailDatabase[0].id);
-            }, 300);
-        });
-
-        logoutBtn.addEventListener('click', () => {
-            appDashboard.classList.add('hidden');
-            loginPage.classList.remove('hidden');
-            loginPage.style.opacity = '1';
-        });
 
         // Compute Side Badge Metrics
         function updateUnreadBadge() {

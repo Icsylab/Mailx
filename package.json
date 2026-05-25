@@ -4,7 +4,9 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "dev": "nodemon server.js",
+    "start": "node server.js"
   },
   "repository": {
     "type": "git",
@@ -22,6 +24,7 @@
   },
   "dependencies": {
     "dotenv": "^17.4.2",
+    "ejs": "^5.0.2",
     "express": "^5.2.1",
     "express-session": "^1.19.0",
     "googleapis": "^172.0.0"

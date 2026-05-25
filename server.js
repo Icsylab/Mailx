@@ -1,3 +1,8 @@
+//for secret thigns
+const dotenv = require("dotenv");
+dotenv.config();
+
+//basic express things
 const express = require("express");
 const app = express();
 const path = require("path");
@@ -7,18 +12,49 @@ app.set("views",path.join(__dirname,"views"));
 app.use(express.static(path.join(__dirname, "public")));
 app.use(express.urlencoded({extended:true}));
 
-// Server start
-app.listen(process.env.PORT || 8080, () => {
-  console.log(`Server running on port ${port}`);
-});
+
+
+
 
 
 // app.use(express.json());
 
 
-const dotenv = require("dotenv");
-dotenv.config();
 
+const session = require("express-session");
+app.use(session({
+  secret: process.env.SESSION_SECRET,
+  resave: false,
+  saveUninitialized: false,
+  cookie: {
+    maxAge: 24 * 60 * 60 * 1000  // session lasts 24 hours
+  }
+}))
+
+//Importing routes
+const authRoutes = require("./routes/auth");
+app.use("/auth", authRoutes);
+
+
+app.get("/", (req, res) => {
+  res.render("login");   
+});
+
+// Home page only accessible after login
+app.get("/home", (req, res) => {
+  if (!req.session.accessToken) {
+    return res.redirect("/");
+  }
+  res.render("home"); 
+});
+
+
+// Server start-----------------------
+const PORT = process.env.PORT || 8080;
+
+app.listen(PORT, () => {
+  console.log(`Server running on port ${PORT}`);
+});
 
 
 
