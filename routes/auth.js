@@ -1,5 +1,5 @@
 const express = require("express");
-const router = express.Router(); //kinda like mini express
+const router = express.Router(); 
 const { google } = require("googleapis");
 
 //creating OAuth client with credentials from .env 
@@ -9,12 +9,11 @@ const oauth2Client = new google.auth.OAuth2(
   process.env.REDIRECT_URI
 );
 
-//permissions we need from the user
 const SCOPES = [
-  "https://www.googleapis.com/auth/gmail.readonly",  // read emails
-  "https://www.googleapis.com/auth/gmail.send",       // send emails
-  "https://www.googleapis.com/auth/userinfo.email",   // get email address
-  "https://www.googleapis.com/auth/userinfo.profile"  // get name/photo
+  "https://www.googleapis.com/auth/gmail.readonly", 
+  "https://www.googleapis.com/auth/gmail.send",     
+  "https://www.googleapis.com/auth/userinfo.email",  
+  "https://www.googleapis.com/auth/userinfo.profile" 
 ];
 
 //ROUTE 1:send user to google login page
@@ -32,25 +31,19 @@ router.get("/google", (req, res) => {
 //ROUTE 2 : Google sends user back here after login 
 router.get("/google/callback", async (req, res) => {
   const code = req.query.code; // Google sends user with one-time code
-
-    console.log("📩 Callback hit! Code:", code);
   try {
     // Exchange code for tokens
     const { tokens } = await oauth2Client.getToken(code); //google replies with access token(expires sson) and refresh token 
-    oauth2Client.setCredentials(tokens); //attaching token to our client
+    oauth2Client.setCredentials(tokens); 
 
     req.session.accessToken = tokens.access_token; //use to call gmail api etc.
     req.session.refreshToken = tokens.refresh_token;//can later get new access token
     
     console.log("✅ Login successful!");
-    console.log("Access token:", req.session.accessToken); 
-
-    // Send user to ihome page
     res.redirect("/home");
 
   } catch (error) {
-    // console.error("❌ OAuth Error:", error);
-     console.error("❌ Full error:", JSON.stringify(error, null, 2));
+     console.error(" OAuth Error:", error);
     res.redirect("/");
   }
 });
@@ -68,7 +61,7 @@ router.get("/status", (req, res) => {
 // ROUTE 4:Logout 
 router.get("/logout", (req, res) => {
   req.session.destroy();
-  res.redirect("/");// Send back to login page
+  res.redirect("/");
 });
 
 

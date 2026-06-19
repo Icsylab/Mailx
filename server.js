@@ -1,8 +1,6 @@
-//for secret thigns
 const dotenv = require("dotenv");
 dotenv.config();
 
-//basic express things
 const express = require("express");
 const app = express();
 const path = require("path");
@@ -34,6 +32,9 @@ app.use(session({
 //Importing routes
 const authRoutes = require("./routes/auth");
 app.use("/auth", authRoutes);
+
+const emailRoutes = require("./routes/emails");
+app.use("/emails", emailRoutes);
 
 
 app.get("/", (req, res) => {
