@@ -50,10 +50,31 @@ function renderEmailList(emails) {
   });
 }
 
+// Generate AI draft when email is selected
+async function generateDraft(emailBody) {
+  try {
+
+    document.getElementById("ai-draft-output").value = "✨ Generating reply...";
+    document.getElementById("ai-drawer").classList.remove("hidden");
+
+    const res = await fetch("/ai/draft", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ emailBody })
+    });
+
+    const data = await res.json();
+
+    document.getElementById("ai-draft-output").value = data.draft;
+
+  } catch (error) {
+    console.error("❌ Draft generation failed:", error);
+  }
+}
+
 async function selectEmail(emailId) {
   try {
     document.getElementById("view-body").textContent = "Loading...";
-    document.getElementById("view-subject").textContent = "Loading...";
 
     const res = await fetch(`/emails/${emailId}`);
     const email = await res.json();
@@ -63,6 +84,8 @@ async function selectEmail(emailId) {
     document.getElementById("view-meta").textContent = `From: ${email.from}`;
     document.getElementById("view-body").textContent = email.body || email.snippet;
     document.getElementById("view-avatar").textContent = getInitials(email.from);
+
+    await generateDraft(email.body || email.snippet);
 
   } catch (error) {
     console.error("❌ Failed to load email:", error);
@@ -85,3 +108,4 @@ function getInitials(from) {
 function formatSender(from) {
   return from.split("<")[0].trim().replace(/"/g, "");
 }
+

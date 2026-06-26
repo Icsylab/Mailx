@@ -31,6 +31,9 @@ app.use("/auth", authRoutes);
 const emailRoutes = require("./routes/emails");
 app.use("/emails", emailRoutes);
 
+const aiRoutes = require("./routes/ai");
+app.use("/ai", aiRoutes);
+
 
 app.get("/", (req, res) => {
   res.render("login");   
