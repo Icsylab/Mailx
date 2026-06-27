@@ -1,9 +1,8 @@
 const express = require("express");
 const router = express.Router();
 
-const { GoogleGenerativeAI } = require("@google/generative-ai");
-
-const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY);
+const { GoogleGenAI } = require("@google/genai");
+const ai = new GoogleGenAI({ apiKey: process.env.GEMINI_API_KEY });
 
 
 router.post("/draft", async (req, res) => {
@@ -14,21 +13,21 @@ router.post("/draft", async (req, res) => {
   }
 
   try {
-    const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash" });
     const prompt = `
       You are a professional email assistant.
-      Read the following email and write a polite, concise, and professional reply.
-      Keep it short — maximum 3-4 sentences.
-      Do not include subject line, just the email body.
+      Read the following email and write a polite, concise reply.
+      Maximum 3-4 sentences. No subject line, just the body.
       
-      Email to reply to:
+      Email:
       ${emailBody}
     `;
-    
-    const result = await model.generateContent(prompt);
-    const draft = result.response.text();
 
-    res.json({ draft });
+    const response = await ai.models.generateContent({
+      model: "gemini-2.5-flash",
+      contents: prompt
+    });
+
+    res.json({ draft: response.text });
 
   } catch (error) {
     console.error("❌ Gemini error:", error);
