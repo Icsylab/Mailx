@@ -66,7 +66,7 @@
 
     .wordmark {
       font-family: var(--serif);
-      font-size: 1.5rem;
+      font-size: 1.92rem;
       letter-spacing: -0.02em;
       color: var(--ink);
       text-decoration: none;
@@ -100,7 +100,7 @@
       display: flex;
       align-items: center;
       gap: 6px;
-      font-size: 0.75rem;
+      font-size: 0.8rem;
       color: var(--muted);
       font-family: var(--sans);
       transition: border-color var(--transition), color var(--transition);

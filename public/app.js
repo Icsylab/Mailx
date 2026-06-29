@@ -82,7 +82,9 @@ async function selectEmail(emailId) {
     document.getElementById("view-subject").textContent = email.subject;
     document.getElementById("view-sender").textContent = formatSender(email.from);
     document.getElementById("view-meta").textContent = `From: ${email.from}`;
-    document.getElementById("view-body").textContent = email.body || email.snippet;
+    document.getElementById("view-body").innerHTML = `
+  <div class="email-content-box">${email.body || email.snippet}</div>
+`;
     document.getElementById("view-avatar").textContent = getInitials(email.from);
 
     await generateDraft(email.body || email.snippet);
