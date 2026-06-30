@@ -1,31 +1,45 @@
 window.onload = async function () {
   await fetchEmails();
+  setupNavigationEvents();
+  setupHamburger();
 };
 
+// ── Hamburger Sidebar Toggle ──────────────────────────────
+function setupHamburger() {
+  const hamburger = document.querySelector(".hamburger-toggle");
+  const sidebar = document.querySelector(".sidebar");
+
+  hamburger?.addEventListener("click", () => {
+    sidebar.classList.toggle("collapsed");
+  });
+}
+
+// ── Fetch Email List ──────────────────────────────────────
 async function fetchEmails() {
   try {
-    document.getElementById("email-feed").innerHTML = 
+    document.getElementById("email-feed").innerHTML =
       "<p style='padding:16px'>Loading emails...</p>";
 
     const res = await fetch("/emails");
     const data = await res.json();
 
     if (!data.emails || data.emails.length === 0) {
-      document.getElementById("email-feed").innerHTML = 
+      document.getElementById("email-feed").innerHTML =
         "<p style='padding:16px'>No unread emails found.</p>";
       return;
     }
 
     renderEmailList(data.emails);
 
-    // Auto select first email
-    selectEmail(data.emails[0].id);
+    const badge = document.getElementById("inbox-badge");
+    if (badge) badge.textContent = data.emails.length;
 
   } catch (error) {
     console.error("❌ Failed to fetch emails:", error);
   }
 }
 
+// ── Render Email List Cards ───────────────────────────────
 function renderEmailList(emails) {
   const feed = document.getElementById("email-feed");
   feed.innerHTML = "";
@@ -40,6 +54,7 @@ function renderEmailList(emails) {
       <div class="email-meta">
         <div class="email-top-row">
           <span class="sender-name">${formatSender(email.from)}</span>
+          <span class="card-time">10:42 AM</span>
         </div>
         <div class="subject-line">${email.subject}</div>
         <div class="body-preview">${email.snippet}</div>
@@ -50,64 +65,133 @@ function renderEmailList(emails) {
   });
 }
 
-// Generate AI draft when email is selected
-async function generateDraft(emailBody) {
-  try {
+// ── Navigation Events ─────────────────────────────────────
+function setupNavigationEvents() {
+  // Back button → return to inbox list
+  const backBtn = document.getElementById("go-back-to-inbox");
+  backBtn?.addEventListener("click", () => {
+    document.getElementById("app-content-area").className = "content-area state-inbox";
+    // Hide reply drawer when going back
+    document.getElementById("ai-drawer").classList.add("hidden");
+  });
 
-    document.getElementById("ai-draft-output").value = "✨ Generating reply...";
-    document.getElementById("ai-drawer").classList.remove("hidden");
+  // Reply button → show AI draft drawer
+  document.getElementById("reply-btn")?.addEventListener("click", async () => {
+    const body = document.querySelector(".email-content-box")?.innerText || "";
+    const drawer = document.getElementById("ai-drawer");
+    drawer.classList.remove("hidden");
+    // Scroll into view smoothly
+    drawer.scrollIntoView({ behavior: "smooth", block: "nearest" });
+    await generateDraft(body);
+  });
 
-    const res = await fetch("/ai/draft", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ emailBody })
-    });
+  // Reply action in side panel → same as reply button
+  document.getElementById("reply-action")?.addEventListener("click", async () => {
+    const body = document.querySelector(".email-content-box")?.innerText || "";
+    const drawer = document.getElementById("ai-drawer");
+    drawer.classList.remove("hidden");
+    drawer.scrollIntoView({ behavior: "smooth", block: "nearest" });
+    await generateDraft(body);
+  });
 
-    const data = await res.json();
+  // Close reply drawer
+  document.getElementById("close-reply")?.addEventListener("click", () => {
+    document.getElementById("ai-drawer").classList.add("hidden");
+  });
 
-    document.getElementById("ai-draft-output").value = data.draft;
+  // Tone selector → regenerate draft with new tone
+  document.getElementById("tone-select")?.addEventListener("change", async () => {
+    const body = document.querySelector(".email-content-box")?.innerText || "";
+    const drawer = document.getElementById("ai-drawer");
+    if (!drawer.classList.contains("hidden")) {
+      await generateDraft(body);
+    }
+  });
 
-  } catch (error) {
-    console.error("❌ Draft generation failed:", error);
-  }
+  // Regenerate button
+  document.getElementById("btn-regenerate")?.addEventListener("click", async () => {
+    const body = document.querySelector(".email-content-box")?.innerText || "";
+    await generateDraft(body);
+  });
 }
 
+// ── Select & Load Single Email ────────────────────────────
 async function selectEmail(emailId) {
   try {
-    document.getElementById("view-body").textContent = "Loading...";
+    // Switch layout to single email view
+    document.getElementById("app-content-area").className = "content-area state-single";
+
+    // Hide reply drawer on new email open
+    document.getElementById("ai-drawer").classList.add("hidden");
+
+    document.getElementById("view-body").innerHTML = "<p style='padding:16px;color:var(--muted)'>Loading...</p>";
 
     const res = await fetch(`/emails/${emailId}`);
     const email = await res.json();
 
+    // Populate header
     document.getElementById("view-subject").textContent = email.subject;
     document.getElementById("view-sender").textContent = formatSender(email.from);
     document.getElementById("view-meta").textContent = `From: ${email.from}`;
-    document.getElementById("view-body").innerHTML = `
-  <div class="email-content-box">${email.body || email.snippet}</div>
-`;
     document.getElementById("view-avatar").textContent = getInitials(email.from);
 
-    await generateDraft(email.body || email.snippet);
+    // Populate email body in Gmail-like box
+    document.getElementById("view-body").innerHTML = `
+      <div class="email-content-box">${email.body || email.snippet}</div>
+    `;
+
+    // Generate simple summary for side panel
+    generateSummary(email.body || email.snippet);
 
   } catch (error) {
     console.error("❌ Failed to load email:", error);
   }
 }
 
-async function logout() {
-  await fetch("/auth/logout");
-  window.location.href = "/";
+// ── Simple Summary (truncate for now, API later) ──────────
+function generateSummary(emailBody) {
+  const summaryBox = document.getElementById("ai-summary");
+  if (!summaryBox) return;
+  const trimmed = (emailBody || "").replace(/\n/g, " ").trim();
+  summaryBox.textContent = trimmed.length > 200
+    ? trimmed.substring(0, 200) + "..."
+    : trimmed || "No content to summarize.";
 }
 
-// ─── Helper: Get initials from "John Doe <john@gmail.com>" 
+// ── Generate AI Draft (Gemini API) ───────────────────────
+async function generateDraft(emailBody) {
+  const outputTextarea = document.getElementById("ai-draft-output");
+  if (!outputTextarea) return;
+
+  // Get selected tone
+  const tone = document.getElementById("tone-select")?.value || "Professional";
+
+  outputTextarea.value = "✨ Generating reply...";
+
+  try {
+    const res = await fetch("/ai/draft", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ emailBody, tone })
+    });
+
+    const data = await res.json();
+    outputTextarea.value = data.draft || "Could not generate draft.";
+
+  } catch (error) {
+    console.error("❌ Draft generation failed:", error);
+    outputTextarea.value = "Failed to generate draft. Please try again.";
+  }
+}
+
+// ── Helpers ───────────────────────────────────────────────
 function getInitials(from) {
+  if (!from) return "—";
   const name = from.split("<")[0].trim();
-  const parts = name.split(" ");
-  return parts.map(p => p[0]).join("").toUpperCase().slice(0, 2);
+  return name.split(" ").map(p => p[0]).join("").toUpperCase().slice(0, 2);
 }
 
-// ─── Helper: Get just name from "John Doe <john@gmail.com>"
 function formatSender(from) {
+  if (!from) return "Unknown Sender";
   return from.split("<")[0].trim().replace(/"/g, "");
 }
-

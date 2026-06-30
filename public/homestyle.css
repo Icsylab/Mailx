@@ -1,77 +1,88 @@
 
-    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
-    /* ── Same tokens as login_v3 ── */
-    :root {
-      --bg:        #f7f6f3;
-      --surface:   #ffffff;
-      --ink:       #1a1a1a;
-      --muted:     #888;
-      --subtle:    #bbb;
-      --border:    #e2e0db;
-      --serif:     'Instrument Serif', Georgia, serif;
-      --sans:      'Inter', system-ui, sans-serif;
-      --radius:    6px;
-      --transition: 0.25s ease;
+    /* ── Top Bar ── */
+    /* .top-navbar {
+      height: var(--topbar-h);
+      background: var(--surface);
+      border-bottom: 1px solid var(--border);
+      display: flex;
+      align-items: center;
+      /* padding: 0 24px; */
+      /* margin: 5px 17px; */
+      /* gap: 40px; */
+      /* position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      z-index: 100; */
+      /* transition: background var(--transition), border-color var(--transition); */
+    /* } */ 
 
-      /* Layout */
-      --sidebar-w: 220px;
-      --list-w:    300px;
+    
+
+    .top-search-wrap {
+      position: relative;
+      width: 100%;
+      max-width: 560px;
     }
 
-    [data-theme="dark"] {
-      --bg:      #0f0f0f;
-      --surface: #181818;
-      --ink:     #f0ede8;
-      --muted:   #666;
-      --subtle:  #3a3a3a;
-      --border:  #252525;
+    .top-search-wrap svg {
+      position: absolute;
+      left: 14px;
+      top: 50%;
+      transform: translateY(-50%);
+      color: var(--subtle);
+      pointer-events: none;
     }
 
-    html, body {
-      height: 100%;
-      overflow: hidden;
+    .top-search-input {
+      width: 100%;
+      padding: 10px 14px 10px 42px;
+      font-size: 0.85rem;
+      font-family: var(--sans);
       background: var(--bg);
       color: var(--ink);
-      font-family: var(--sans);
-      -webkit-font-smoothing: antialiased;
-      transition: background var(--transition), color var(--transition);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      outline: none;
+      transition: border-color 0.2s, background var(--transition), color var(--transition);
     }
 
-    button { font-family: var(--sans); cursor: pointer; border: none; background: none; color: inherit; }
-    a { text-decoration: none; color: inherit; }
-
-    /* ── App shell — 3 column layout ── */
-    .app {
-      display: grid;
-      grid-template-columns: var(--sidebar-w) var(--list-w) 1fr;
-      height: 100vh;
+    .top-search-input:focus { 
+      border-color: var(--subtle); 
     }
 
-    /* ═══════════════════════════════════════
-       SIDEBAR
-    ═══════════════════════════════════════ */
+    /* ── Core App Shell Workspace Below Top Row ── */
+    .app-workspace {
+      display: flex;
+      height: calc(100vh - var(--topbar-h));
+      margin-top: var(--topbar-h);
+    }
+
+    /* ── Sidebar ── */
     .sidebar {
+      width: var(--sidebar-w);
       display: flex;
       flex-direction: column;
-      justify-content: space-between;
+      justify-content: flex-start;
       border-right: 1px solid var(--border);
       background: var(--bg);
-      padding: 24px 16px;
+      padding: 16px;
+      flex-shrink: 0;
       transition: background var(--transition), border-color var(--transition);
+      /* position:fixed;
+      left:0px; */
     }
 
-    .sidebar-brand {
-      font-family: var(--serif);
-      font-size: 1.3rem;
-      letter-spacing: -0.02em;
+    .hamburger-toggle {
       color: var(--ink);
-      padding: 0 8px;
-      margin-bottom: 28px;
-      transition: color var(--transition);
+      padding: 4px 8px;
+      margin-bottom: 20px;
+      display: inline-flex;
+      align-items: center;
+      font-size: 1.2rem;
     }
 
-    /* nav items */
     .nav-list {
       list-style: none;
       display: flex;
@@ -84,10 +95,9 @@
       align-items: center;
       justify-content: space-between;
       width: 100%;
-      padding: 8px 10px;
+      padding: 10px 12px;
       border-radius: var(--radius);
-      font-size: 0.82rem;
-      font-weight: 400;
+      font-size: 0.85rem;
       color: var(--muted);
       transition: background var(--transition), color var(--transition);
     }
@@ -107,234 +117,203 @@
     .nav-link-group {
       display: flex;
       align-items: center;
-      gap: 9px;
+      gap: 12px;
     }
 
     .badge-count {
-      font-size: 0.65rem;
+      font-size: 0.7rem;
       background: var(--ink);
       color: var(--bg);
       padding: 1px 6px;
       border-radius: 10px;
       font-weight: 500;
-      min-width: 18px;
+      min-width: 20px;
       text-align: center;
-      transition: background var(--transition), color var(--transition);
     }
 
-    /* theme toggle in sidebar */
     .sidebar-theme {
       display: flex;
       align-items: center;
-      gap: 8px;
-      padding: 8px 10px;
-      font-size: 0.78rem;
+      gap: 12px;
+      padding: 10px 12px;
+      font-size: 0.8rem;
       color: var(--muted);
       border-radius: var(--radius);
-      cursor: pointer;
       width: 100%;
-      transition: color var(--transition);
-      border: none;
-      background: none;
     }
 
-    .sidebar-theme:hover { color: var(--ink); }
+    
 
-    .sidebar-bottom {
+    /* mmm */
+    .app-workspace{
       display: flex;
-      flex-direction: column;
-      gap: 4px;
+
+    }
+    
+
+    /* ── Content Area ── */
+    .content-area {
+      flex: 1;
+      display: grid;
+      /* position: fixed;
+      top: 61px;
+      left: 137px;
+      right: 0;
+      bottom: 0; */
+      
     }
 
-    /* logout */
-    .logout-btn button {
+    /* App Views Toggle Conditions via classes on .content-area */
+    .content-area.state-inbox {
+      grid-template-columns: 1fr;
+    }
+    .content-area.state-inbox .preview-panel {
+      display: none !important;
+    }
+    .content-area.state-inbox .list-panel {
       display: flex;
-      align-items: center;
-      gap: 9px;
-      width: 100%;
-      padding: 8px 10px;
-      font-size: 0.82rem;
-      color: var(--muted);
-      border-radius: var(--radius);
-      transition: color var(--transition), background var(--transition);
     }
 
-    .logout-btn button:hover { color: #e53e3e; background: var(--surface); }
+    .content-area.state-single {
+      grid-template-columns: 1fr 300px;
+    }
+    .content-area.state-single .list-panel {
+      display: none !important;
+    }
+    .content-area.state-single .preview-panel {
+      display: grid;
+    }
 
-    /* ═══════════════════════════════════════
-       EMAIL LIST PANEL
-    ═══════════════════════════════════════ */
+    /* ── Email List Panel View State ── */
     .list-panel {
-      display: flex;
       flex-direction: column;
-      border-right: 1px solid var(--border);
       background: var(--surface);
-      overflow: hidden;
-      transition: background var(--transition), border-color var(--transition);
     }
 
     .list-header {
-      padding: 20px 18px 14px;
+      padding: 20px 24px;
       border-bottom: 1px solid var(--border);
-      display: flex;
-      flex-direction: column;
-      gap: 12px;
-      flex-shrink: 0;
-      transition: border-color var(--transition);
     }
 
     .list-title {
       font-family: var(--serif);
-      font-size: 1.15rem;
-      letter-spacing: -0.01em;
+      font-size: 1.3rem;
       color: var(--ink);
-      transition: color var(--transition);
     }
 
-    /* search */
-    .search-wrap {
-      position: relative;
-    }
-
-    .search-wrap svg {
-      position: absolute;
-      left: 10px;
-      top: 50%;
-      transform: translateY(-50%);
-      color: var(--subtle);
-      pointer-events: none;
-    }
-
-    .search-input {
-      width: 100%;
-      padding: 8px 12px 8px 32px;
-      font-size: 0.8rem;
-      font-family: var(--sans);
-      background: var(--bg);
-      color: var(--ink);
-      border: 1px solid var(--border);
-      border-radius: var(--radius);
-      outline: none;
-      transition: border-color 0.2s, background var(--transition), color var(--transition);
-    }
-
-    .search-input:focus { border-color: var(--subtle); }
-    .search-input::placeholder { color: var(--subtle); }
-
-    /* email feed */
     .email-feed {
       flex: 1;
       overflow-y: auto;
     }
 
-    .email-feed::-webkit-scrollbar { width: 4px; }
-    .email-feed::-webkit-scrollbar-track { background: transparent; }
-    .email-feed::-webkit-scrollbar-thumb { background: var(--border); border-radius: 4px; }
-
-    /* email card */
     .email-card {
-      padding: 14px 18px;
+      padding: 16px 24px;
       border-bottom: 1px solid var(--border);
       cursor: pointer;
-      transition: background var(--transition), border-color var(--transition);
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      transition: background var(--transition);
     }
 
-    .email-card:hover { background: var(--bg); }
-    .email-card.selected { background: var(--bg); border-left: 2px solid var(--ink); }
+    .email-card:hover { 
+      background: var(--bg); 
+    }
+    
+    .email-meta {
+      flex: 1;
+      min-width: 0;
+    }
 
-    .card-top {
+    .email-top-row {
       display: flex;
       justify-content: space-between;
       align-items: center;
       margin-bottom: 4px;
     }
 
-    .card-sender {
-      font-size: 0.82rem;
+    .sender-name {
+      font-size: 0.88rem;
       font-weight: 500;
       color: var(--ink);
-      transition: color var(--transition);
-      white-space: nowrap;
-      overflow: hidden;
-      text-overflow: ellipsis;
-      max-width: 160px;
     }
 
     .card-time {
-      font-size: 0.7rem;
+      font-size: 0.75rem;
       color: var(--subtle);
-      flex-shrink: 0;
-      transition: color var(--transition);
     }
 
-    .card-subject {
-      font-size: 0.8rem;
+    .subject-line {
+      font-size: 0.85rem;
       color: var(--ink);
       margin-bottom: 3px;
       white-space: nowrap;
       overflow: hidden;
       text-overflow: ellipsis;
-      transition: color var(--transition);
     }
 
-    .card-preview {
-      font-size: 0.75rem;
+    .body-preview {
+      font-size: 0.8rem;
       color: var(--muted);
-      font-weight: 300;
       white-space: nowrap;
       overflow: hidden;
       text-overflow: ellipsis;
-      transition: color var(--transition);
     }
 
-    .unread-dot {
-      display: inline-block;
-      width: 6px;
-      height: 6px;
-      background: var(--ink);
-      border-radius: 50%;
-      margin-left: 6px;
-      vertical-align: middle;
-      transition: background var(--transition);
-    }
-
-    /* empty / loading state */
     .feed-state {
-      padding: 32px 18px;
-      font-size: 0.8rem;
+      padding: 32px;
+      font-size: 0.85rem;
       color: var(--muted);
       text-align: center;
-      line-height: 1.6;
-      transition: color var(--transition);
     }
 
-    /* ═══════════════════════════════════════
-       PREVIEW PANEL
-    ═══════════════════════════════════════ */
-    .preview-panel {
+    /* ── Single Email Panel View State ── */
+.preview-panel {
+     
+      grid-template-columns: auto 1fr;
+      background: var(--surface);
+    }
+
+    .main-mail-view {
+      background: var(--bg);
       display: flex;
       flex-direction: column;
-      background: var(--bg);
       overflow: hidden;
-      transition: background var(--transition);
     }
 
-    /* preview header */
     .preview-header {
-      padding: 20px 28px 16px;
+      padding: 20px 28px;
       border-bottom: 1px solid var(--border);
-      flex-shrink: 0;
-      transition: border-color var(--transition);
+      background: var(--surface);
+    }
+
+    .subject-container-row {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      margin-bottom: 16px;
+    }
+
+    .back-arrow-btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 32px;
+      height: 32px;
+      border-radius: 50%;
+      color: var(--ink);
+    }
+
+    .back-arrow-btn:hover {
+      background: var(--bg);
     }
 
     .preview-subject {
       font-family: var(--serif);
-      font-size: 1.2rem;
+      font-size: 1.4rem;
       letter-spacing: -0.01em;
       color: var(--ink);
-      margin-bottom: 12px;
       line-height: 1.3;
-      transition: color var(--transition);
     }
 
     .sender-row {
@@ -346,45 +325,32 @@
     .sender-info {
       display: flex;
       align-items: center;
-      gap: 10px;
+      gap: 12px;
     }
 
-    /* avatar circle */
     .avatar {
-      width: 32px;
-      height: 32px;
+      width: 36px;
+      height: 36px;
       border-radius: 50%;
       background: var(--border);
-      border: 1px solid var(--border);
       display: flex;
       align-items: center;
       justify-content: center;
-      font-size: 0.7rem;
+      font-size: 0.75rem;
       font-weight: 500;
       color: var(--muted);
       flex-shrink: 0;
-      transition: background var(--transition), border-color var(--transition), color var(--transition);
-    }
-
-    .sender-name {
-      font-size: 0.85rem;
-      font-weight: 500;
-      color: var(--ink);
-      transition: color var(--transition);
     }
 
     .sender-meta {
-      font-size: 0.75rem;
+      font-size: 0.78rem;
       color: var(--muted);
-      font-weight: 300;
-      transition: color var(--transition);
     }
 
-    /* action icons */
     .action-group {
       display: flex;
       align-items: center;
-      gap: 4px;
+      gap: 6px;
     }
 
     .icon-btn {
@@ -395,58 +361,56 @@
       align-items: center;
       justify-content: center;
       color: var(--muted);
-      transition: background var(--transition), color var(--transition);
     }
 
-    .icon-btn:hover { background: var(--surface); color: var(--ink); }
+    .icon-btn:hover { 
+      background: var(--bg); 
+      color: var(--ink); 
+    }
 
-    /* email body */
     .preview-body {
-  flex: 1;
-  overflow-y: auto;
-  padding: 24px 28px;
-  transition: background var(--transition);
-}
-
-/* Gmail-like email container */
-.email-content-box {
-  background: var(--surface);
-  border: 1px solid var(--border);
-  border-radius: 8px;
-  padding: 28px 32px;
-  font-family: Arial, sans-serif;   /* Gmail uses Arial */
-  font-size: 0.9rem;
-  line-height: 1.8;
-  color: #202124;                   /* Gmail's exact text color */
-  white-space: pre-wrap;
-  word-break: break-word;
-  min-height: 200px;
-  transition: background var(--transition), border-color var(--transition);
-}
-
-[data-theme="dark"] .email-content-box {
-  color: #e8eaed;                   /* Gmail dark mode text color */
-}
-
-    .preview-body::-webkit-scrollbar { width: 4px; }
-    .preview-body::-webkit-scrollbar-thumb { background: var(--border); border-radius: 4px; }
-
-    /* ── AI Drawer ── */
-    .ai-drawer {
-      border-top: 1px solid var(--border);
-      background: var(--surface);
-      padding: 16px 28px 20px;
-      flex-shrink: 0;
-      transition: background var(--transition), border-color var(--transition);
+      flex: 1;
+      overflow-y: auto;
+      padding: 24px 28px;
     }
 
-    .ai-drawer.hidden { display: none; }
+    .email-content-box {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 28px 32px;
+      font-family: Arial, sans-serif;
+      font-size: 0.92rem;
+      line-height: 1.8;
+      color: #202124;
+      white-space: pre-wrap;
+      word-break: break-word;
+      min-height: 180px;
+    }
+
+    [data-theme="dark"] .email-content-box {
+      color: #e8eaed;
+      background: #1e1e1e;
+    }
+
+    /* ── Inline Reply Container ── */
+    .inline-reply-container {
+      margin-top: 20px;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 20px;
+    }
+
+    .inline-reply-container.hidden {
+      display: none !important;
+    }
 
     .ai-bar {
       display: flex;
       align-items: center;
       justify-content: space-between;
-      margin-bottom: 12px;
+      margin-bottom: 14px;
     }
 
     .ai-indicator {
@@ -455,14 +419,12 @@
       gap: 8px;
     }
 
-    /* glowing dot */
     .ai-dot {
       width: 7px;
       height: 7px;
       border-radius: 50%;
       background: var(--ink);
       animation: pulse 2s infinite;
-      transition: background var(--transition);
     }
 
     @keyframes pulse {
@@ -476,38 +438,14 @@
       letter-spacing: 0.06em;
       text-transform: uppercase;
       color: var(--muted);
-      transition: color var(--transition);
     }
 
-    /* intent pills */
-    .intent-group {
-      display: flex;
-      gap: 6px;
-    }
-
-    .intent-pill {
-      padding: 4px 12px;
-      border-radius: 20px;
-      font-size: 0.72rem;
-      font-weight: 500;
-      color: var(--muted);
-      border: 1px solid var(--border);
-      background: none;
-      cursor: pointer;
-      transition: background var(--transition), color var(--transition), border-color var(--transition);
-    }
-
-    .intent-pill:hover { border-color: var(--subtle); color: var(--ink); }
-    .intent-pill.active { background: var(--ink); color: var(--bg); border-color: var(--ink); }
-
-    /* draft textarea */
     .draft-textarea {
       width: 100%;
-      height: 90px;
+      height: 140px;
       padding: 12px 14px;
-      font-size: 0.82rem;
+      font-size: 0.88rem;
       font-family: var(--sans);
-      font-weight: 300;
       line-height: 1.6;
       color: var(--ink);
       background: var(--bg);
@@ -515,14 +453,9 @@
       border-radius: var(--radius);
       resize: none;
       outline: none;
-      margin-bottom: 10px;
-      transition: border-color 0.2s, background var(--transition), color var(--transition);
+      margin-bottom: 14px;
     }
 
-    .draft-textarea:focus { border-color: var(--subtle); }
-    .draft-textarea::placeholder { color: var(--subtle); }
-
-    /* draft action buttons */
     .draft-actions {
       display: flex;
       align-items: center;
@@ -533,33 +466,198 @@
       display: flex;
       align-items: center;
       gap: 6px;
-      padding: 7px 14px;
-      font-size: 0.78rem;
+      padding: 8px 16px;
+      font-size: 0.8rem;
       font-weight: 500;
       color: var(--muted);
       border: 1px solid var(--border);
       border-radius: var(--radius);
       background: none;
-      cursor: pointer;
-      transition: color var(--transition), border-color var(--transition), background var(--transition);
     }
 
-    .btn-secondary:hover { color: var(--ink); border-color: var(--subtle); }
+    .btn-secondary:hover { 
+      color: var(--ink); 
+      border-color: var(--subtle); 
+    }
 
     .btn-primary {
       display: flex;
       align-items: center;
       gap: 6px;
-      padding: 7px 18px;
-      font-size: 0.78rem;
+      padding: 8px 20px;
+      font-size: 0.8rem;
       font-weight: 500;
       color: var(--bg);
       background: var(--ink);
       border: 1px solid var(--ink);
       border-radius: var(--radius);
-      cursor: pointer;
-      transition: opacity 0.2s, background var(--transition), color var(--transition), border-color var(--transition);
     }
 
-    .btn-primary:hover { opacity: 0.8; }
-    .btn-primary:disabled { opacity: 0.4; cursor: not-allowed; }
+    .btn-primary:hover { 
+      opacity: 0.9; 
+    }
+
+    /* ── Permanent Right Sidebar AI Summary Panel ── */
+    .summary-panel {
+      border-left: 1px solid var(--border);
+      background: var(--surface);
+      padding: 24px;
+      overflow-y: auto;
+    }
+
+    .summary-card {
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 18px;
+      margin-bottom: 20px;
+      background: var(--bg);
+    }
+
+    .summary-card h4 {
+      margin-top: 14px;
+      margin-bottom: 8px;
+      font-size: .95rem;
+      color: var(--ink);
+    }
+
+    #ai-summary {
+      font-size: .85rem;
+      line-height: 1.7;
+      color: var(--muted);
+    }
+
+    .summary-actions {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+
+    .action-card {
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 14px;
+      text-align: left;
+      background: var(--surface);
+      transition: .2s;
+    }
+
+    .action-card:hover {
+      background: var(--bg);
+    }
+
+    .action-card strong {
+      display: block;
+      margin-bottom: 4px;
+      font-size: 0.85rem;
+    }
+
+    .action-card span {
+      color: var(--muted);
+      font-size: .78rem;
+    }
+
+    .action-card.delete {
+      color: #dc2626;
+    }
+
+    /* ------------ */
+    /* ═══════════════════════════════════════
+   HAMBURGER — COLLAPSED SIDEBAR
+   When .sidebar has class "collapsed",
+   shrink to icons only (56px wide)
+═══════════════════════════════════════ */
+
+.sidebar {
+  transition: width 0.25s ease, background var(--transition), border-color var(--transition);
+}
+
+/* Collapsed state — icons only */
+.sidebar.collapsed {
+  width: 56px;
+}
+
+/* Hide text labels when collapsed */
+.sidebar.collapsed .nav-item button span,
+.sidebar.collapsed .nav-link-group span,
+.sidebar.collapsed .badge-count,
+.sidebar.collapsed .sidebar-theme span,
+.sidebar.collapsed .logout-btn button span {
+  display: none;
+}
+
+/* Center icons when collapsed */
+.sidebar.collapsed .nav-item button {
+  justify-content: center;
+  padding: 10px 0;
+}
+
+.sidebar.collapsed .nav-link-group {
+  gap: 0;
+}
+
+.sidebar.collapsed .logout-btn button {
+  justify-content: center;
+  padding: 10px 0;
+  gap: 0;
+}
+
+.sidebar.collapsed .sidebar-theme {
+  justify-content: center;
+  padding: 10px 0;
+  gap: 0;
+}
+
+/* Hamburger button itself stays centered */
+.sidebar.collapsed .hamburger-toggle {
+  display: flex;
+  justify-content: center;
+  width: 100%;
+  padding: 4px 0;
+}
+
+/* ═══════════════════════════════════════
+   BOTTOM REPLY PANEL — TONE SELECTOR
+═══════════════════════════════════════ */
+
+.reply-toolbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 10px;
+}
+
+.tone-group {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.tone-label {
+  font-size: 0.75rem;
+  color: var(--muted);
+  font-weight: 400;
+}
+
+.tone-select {
+  padding: 5px 10px;
+  font-size: 0.78rem;
+  font-family: var(--sans);
+  color: var(--ink);
+  background: var(--bg);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  outline: none;
+  cursor: pointer;
+  transition: border-color 0.2s, background var(--transition), color var(--transition);
+  appearance: none;
+  padding-right: 24px;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%23888' stroke-width='2'%3E%3Cpath d='M6 9l6 6 6-6'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 8px center;
+}
+
+.tone-select:focus {
+  border-color: var(--subtle);
+}
+
+

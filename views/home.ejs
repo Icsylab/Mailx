@@ -7,764 +7,254 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Inter:wght@300;400;500&display=swap" rel="stylesheet">
- <style>
-    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  <link rel="stylesheet" href="style.css"/>
+  <link rel="stylesheet" href="homestyle.css"/>
 
-    /* ── Same tokens as login_v3 ── */
-    :root {
-      --bg:        #f7f6f3;
-      --surface:   #ffffff;
-      --ink:       #1a1a1a;
-      --muted:     #888;
-      --subtle:    #bbb;
-      --border:    #e2e0db;
-      --serif:     'Instrument Serif', Georgia, serif;
-      --sans:      'Inter', system-ui, sans-serif;
-      --radius:    6px;
-      --transition: 0.25s ease;
-
-      /* Layout */
-      --sidebar-w: 220px;
-      --list-w:    300px;
-    }
-
-    [data-theme="dark"] {
-      --bg:      #0f0f0f;
-      --surface: #181818;
-      --ink:     #f0ede8;
-      --muted:   #666;
-      --subtle:  #3a3a3a;
-      --border:  #252525;
-    }
-
-    html, body {
-      height: 100%;
-      overflow: hidden;
-      background: var(--bg);
-      color: var(--ink);
-      font-family: var(--sans);
-      -webkit-font-smoothing: antialiased;
-      transition: background var(--transition), color var(--transition);
-    }
-
-    button { font-family: var(--sans); cursor: pointer; border: none; background: none; color: inherit; }
-    a { text-decoration: none; color: inherit; }
-
-    /* ── App shell — 3 column layout ── */
-    .app {
-      display: grid;
-      grid-template-columns: var(--sidebar-w) var(--list-w) 1fr;
-      height: 100vh;
-    }
-
-    /* ═══════════════════════════════════════
-       SIDEBAR
-    ═══════════════════════════════════════ */
-    .sidebar {
-      display: flex;
-      flex-direction: column;
-      justify-content: space-between;
-      border-right: 1px solid var(--border);
-      background: var(--bg);
-      padding: 24px 16px;
-      transition: background var(--transition), border-color var(--transition);
-    }
-
-    .sidebar-brand {
-      font-family: var(--serif);
-      font-size: 1.3rem;
-      letter-spacing: -0.02em;
-      color: var(--ink);
-      padding: 0 8px;
-      margin-bottom: 28px;
-      transition: color var(--transition);
-    }
-
-    /* nav items */
-    .nav-list {
-      list-style: none;
-      display: flex;
-      flex-direction: column;
-      gap: 2px;
-    }
-
-    .nav-item button {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      width: 100%;
-      padding: 8px 10px;
-      border-radius: var(--radius);
-      font-size: 0.82rem;
-      font-weight: 400;
-      color: var(--muted);
-      transition: background var(--transition), color var(--transition);
-    }
-
-    .nav-item button:hover {
-      background: var(--surface);
-      color: var(--ink);
-    }
-
-    .nav-item.active button {
-      background: var(--surface);
-      color: var(--ink);
-      font-weight: 500;
-      border: 1px solid var(--border);
-    }
-
-    .nav-link-group {
-      display: flex;
-      align-items: center;
-      gap: 9px;
-    }
-
-    .badge-count {
-      font-size: 0.65rem;
-      background: var(--ink);
-      color: var(--bg);
-      padding: 1px 6px;
-      border-radius: 10px;
-      font-weight: 500;
-      min-width: 18px;
-      text-align: center;
-      transition: background var(--transition), color var(--transition);
-    }
-
-    /* theme toggle in sidebar */
-    .sidebar-theme {
-      display: flex;
-      align-items: center;
-      gap: 8px;
-      padding: 8px 10px;
-      font-size: 0.78rem;
-      color: var(--muted);
-      border-radius: var(--radius);
-      cursor: pointer;
-      width: 100%;
-      transition: color var(--transition);
-      border: none;
-      background: none;
-    }
-
-    .sidebar-theme:hover { color: var(--ink); }
-
-    .sidebar-bottom {
-      display: flex;
-      flex-direction: column;
-      gap: 4px;
-    }
-
-    /* logout */
-    .logout-btn button {
-      display: flex;
-      align-items: center;
-      gap: 9px;
-      width: 100%;
-      padding: 8px 10px;
-      font-size: 0.82rem;
-      color: var(--muted);
-      border-radius: var(--radius);
-      transition: color var(--transition), background var(--transition);
-    }
-
-    .logout-btn button:hover { color: #e53e3e; background: var(--surface); }
-
-    /* ═══════════════════════════════════════
-       EMAIL LIST PANEL
-    ═══════════════════════════════════════ */
-    .list-panel {
-      display: flex;
-      flex-direction: column;
-      border-right: 1px solid var(--border);
-      background: var(--surface);
-      overflow: hidden;
-      transition: background var(--transition), border-color var(--transition);
-    }
-
-    .list-header {
-      padding: 20px 18px 14px;
-      border-bottom: 1px solid var(--border);
-      display: flex;
-      flex-direction: column;
-      gap: 12px;
-      flex-shrink: 0;
-      transition: border-color var(--transition);
-    }
-
-    .list-title {
-      font-family: var(--serif);
-      font-size: 1.15rem;
-      letter-spacing: -0.01em;
-      color: var(--ink);
-      transition: color var(--transition);
-    }
-
-    /* search */
-    .search-wrap {
-      position: relative;
-    }
-
-    .search-wrap svg {
-      position: absolute;
-      left: 10px;
-      top: 50%;
-      transform: translateY(-50%);
-      color: var(--subtle);
-      pointer-events: none;
-    }
-
-    .search-input {
-      width: 100%;
-      padding: 8px 12px 8px 32px;
-      font-size: 0.8rem;
-      font-family: var(--sans);
-      background: var(--bg);
-      color: var(--ink);
-      border: 1px solid var(--border);
-      border-radius: var(--radius);
-      outline: none;
-      transition: border-color 0.2s, background var(--transition), color var(--transition);
-    }
-
-    .search-input:focus { border-color: var(--subtle); }
-    .search-input::placeholder { color: var(--subtle); }
-
-    /* email feed */
-    .email-feed {
-      flex: 1;
-      overflow-y: auto;
-    }
-
-    .email-feed::-webkit-scrollbar { width: 4px; }
-    .email-feed::-webkit-scrollbar-track { background: transparent; }
-    .email-feed::-webkit-scrollbar-thumb { background: var(--border); border-radius: 4px; }
-
-    /* email card */
-    .email-card {
-      padding: 14px 18px;
-      border-bottom: 1px solid var(--border);
-      cursor: pointer;
-      transition: background var(--transition), border-color var(--transition);
-    }
-
-    .email-card:hover { background: var(--bg); }
-    .email-card.selected { background: var(--bg); border-left: 2px solid var(--ink); }
-
-    .card-top {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      margin-bottom: 4px;
-    }
-
-    .card-sender {
-      font-size: 0.82rem;
-      font-weight: 500;
-      color: var(--ink);
-      transition: color var(--transition);
-      white-space: nowrap;
-      overflow: hidden;
-      text-overflow: ellipsis;
-      max-width: 160px;
-    }
-
-    .card-time {
-      font-size: 0.7rem;
-      color: var(--subtle);
-      flex-shrink: 0;
-      transition: color var(--transition);
-    }
-
-    .card-subject {
-      font-size: 0.8rem;
-      color: var(--ink);
-      margin-bottom: 3px;
-      white-space: nowrap;
-      overflow: hidden;
-      text-overflow: ellipsis;
-      transition: color var(--transition);
-    }
-
-    .card-preview {
-      font-size: 0.75rem;
-      color: var(--muted);
-      font-weight: 300;
-      white-space: nowrap;
-      overflow: hidden;
-      text-overflow: ellipsis;
-      transition: color var(--transition);
-    }
-
-    .unread-dot {
-      display: inline-block;
-      width: 6px;
-      height: 6px;
-      background: var(--ink);
-      border-radius: 50%;
-      margin-left: 6px;
-      vertical-align: middle;
-      transition: background var(--transition);
-    }
-
-    /* empty / loading state */
-    .feed-state {
-      padding: 32px 18px;
-      font-size: 0.8rem;
-      color: var(--muted);
-      text-align: center;
-      line-height: 1.6;
-      transition: color var(--transition);
-    }
-
-    /* ═══════════════════════════════════════
-       PREVIEW PANEL
-    ═══════════════════════════════════════ */
-    .preview-panel {
-      display: flex;
-      flex-direction: column;
-      background: var(--bg);
-      overflow: hidden;
-      transition: background var(--transition);
-    }
-
-    /* preview header */
-    .preview-header {
-      padding: 20px 28px 16px;
-      border-bottom: 1px solid var(--border);
-      flex-shrink: 0;
-      transition: border-color var(--transition);
-    }
-
-    .preview-subject {
-      font-family: var(--serif);
-      font-size: 1.2rem;
-      letter-spacing: -0.01em;
-      color: var(--ink);
-      margin-bottom: 12px;
-      line-height: 1.3;
-      transition: color var(--transition);
-    }
-
-    .sender-row {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-    }
-
-    .sender-info {
-      display: flex;
-      align-items: center;
-      gap: 10px;
-    }
-
-    /* avatar circle */
-    .avatar {
-      width: 32px;
-      height: 32px;
-      border-radius: 50%;
-      background: var(--border);
-      border: 1px solid var(--border);
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-size: 0.7rem;
-      font-weight: 500;
-      color: var(--muted);
-      flex-shrink: 0;
-      transition: background var(--transition), border-color var(--transition), color var(--transition);
-    }
-
-    .sender-name {
-      font-size: 0.85rem;
-      font-weight: 500;
-      color: var(--ink);
-      transition: color var(--transition);
-    }
-
-    .sender-meta {
-      font-size: 0.75rem;
-      color: var(--muted);
-      font-weight: 300;
-      transition: color var(--transition);
-    }
-
-    /* action icons */
-    .action-group {
-      display: flex;
-      align-items: center;
-      gap: 4px;
-    }
-
-    .icon-btn {
-      width: 32px;
-      height: 32px;
-      border-radius: var(--radius);
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      color: var(--muted);
-      transition: background var(--transition), color var(--transition);
-    }
-
-    .icon-btn:hover { background: var(--surface); color: var(--ink); }
-
-    /* email body */
-    .preview-body {
-  flex: 1;
-  overflow-y: auto;
-  padding: 24px 28px;
-  transition: background var(--transition);
-}
-
-/* Gmail-like email container */
-.email-content-box {
-  background: var(--surface);
-  border: 1px solid var(--border);
-  border-radius: 8px;
-  padding: 28px 32px;
-  font-family: Arial, sans-serif;   /* Gmail uses Arial */
-  font-size: 0.9rem;
-  line-height: 1.8;
-  color: #202124;                   /* Gmail's exact text color */
-  white-space: pre-wrap;
-  word-break: break-word;
-  min-height: 200px;
-  transition: background var(--transition), border-color var(--transition);
-}
-
-[data-theme="dark"] .email-content-box {
-  color: #e8eaed;                   /* Gmail dark mode text color */
-}
-
-    .preview-body::-webkit-scrollbar { width: 4px; }
-    .preview-body::-webkit-scrollbar-thumb { background: var(--border); border-radius: 4px; }
-
-    /* ── AI Drawer ── */
-    .ai-drawer {
-      border-top: 1px solid var(--border);
-      background: var(--surface);
-      padding: 16px 28px 20px;
-      flex-shrink: 0;
-      transition: background var(--transition), border-color var(--transition);
-    }
-
-    .ai-drawer.hidden { display: none; }
-
-    .ai-bar {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      margin-bottom: 12px;
-    }
-
-    .ai-indicator {
-      display: flex;
-      align-items: center;
-      gap: 8px;
-    }
-
-    /* glowing dot */
-    .ai-dot {
-      width: 7px;
-      height: 7px;
-      border-radius: 50%;
-      background: var(--ink);
-      animation: pulse 2s infinite;
-      transition: background var(--transition);
-    }
-
-    @keyframes pulse {
-      0%, 100% { opacity: 1; }
-      50%       { opacity: 0.3; }
-    }
-
-    .ai-label {
-      font-size: 0.72rem;
-      font-weight: 500;
-      letter-spacing: 0.06em;
-      text-transform: uppercase;
-      color: var(--muted);
-      transition: color var(--transition);
-    }
-
-    /* intent pills */
-    .intent-group {
-      display: flex;
-      gap: 6px;
-    }
-
-    .intent-pill {
-      padding: 4px 12px;
-      border-radius: 20px;
-      font-size: 0.72rem;
-      font-weight: 500;
-      color: var(--muted);
-      border: 1px solid var(--border);
-      background: none;
-      cursor: pointer;
-      transition: background var(--transition), color var(--transition), border-color var(--transition);
-    }
-
-    .intent-pill:hover { border-color: var(--subtle); color: var(--ink); }
-    .intent-pill.active { background: var(--ink); color: var(--bg); border-color: var(--ink); }
-
-    /* draft textarea */
-    .draft-textarea {
-      width: 100%;
-      height: 90px;
-      padding: 12px 14px;
-      font-size: 0.82rem;
-      font-family: var(--sans);
-      font-weight: 300;
-      line-height: 1.6;
-      color: var(--ink);
-      background: var(--bg);
-      border: 1px solid var(--border);
-      border-radius: var(--radius);
-      resize: none;
-      outline: none;
-      margin-bottom: 10px;
-      transition: border-color 0.2s, background var(--transition), color var(--transition);
-    }
-
-    .draft-textarea:focus { border-color: var(--subtle); }
-    .draft-textarea::placeholder { color: var(--subtle); }
-
-    /* draft action buttons */
-    .draft-actions {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-    }
-
-    .btn-secondary {
-      display: flex;
-      align-items: center;
-      gap: 6px;
-      padding: 7px 14px;
-      font-size: 0.78rem;
-      font-weight: 500;
-      color: var(--muted);
-      border: 1px solid var(--border);
-      border-radius: var(--radius);
-      background: none;
-      cursor: pointer;
-      transition: color var(--transition), border-color var(--transition), background var(--transition);
-    }
-
-    .btn-secondary:hover { color: var(--ink); border-color: var(--subtle); }
-
-    .btn-primary {
-      display: flex;
-      align-items: center;
-      gap: 6px;
-      padding: 7px 18px;
-      font-size: 0.78rem;
-      font-weight: 500;
-      color: var(--bg);
-      background: var(--ink);
-      border: 1px solid var(--ink);
-      border-radius: var(--radius);
-      cursor: pointer;
-      transition: opacity 0.2s, background var(--transition), color var(--transition), border-color var(--transition);
-    }
-
-    .btn-primary:hover { opacity: 0.8; }
-    .btn-primary:disabled { opacity: 0.4; cursor: not-allowed; }
-</style>
 </head>
 <body>
 
-<div class="app">
+  <!-- ── Top Bar ── -->
+  <header class="topbar">
+    <a class="wordmark" href="/">Mailx</a>
 
-  <!-- ═══ SIDEBAR ═══ -->
-  <aside class="sidebar">
-    <div>
-      <div class="sidebar-brand">Mailx</div>
-
-      <ul class="nav-list">
-        <li class="nav-item active" data-tab="inbox">
-          <button>
-            <div class="nav-link-group">
-              <svg width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
-                <path d="M20 13V6a2 2 0 00-2-2H6a2 2 0 00-2 2v7m16 0a2 2 0 01-2 2H6a2 2 0 01-2-2m16 0h-2.586a1 1 0 00-.707.293l-2.414 2.414a1 1 0 01-.707.293h-3.172a1 1 0 01-.707-.293l-2.414-2.414A1 1 0 006.586 13H4"/>
-              </svg>
-              Inbox
-            </div>
-            <span class="badge-count" id="inbox-badge">0</span>
-          </button>
-        </li>
-
-        <li class="nav-item" data-tab="unread">
-          <button>
-            <div class="nav-link-group">
-              <svg width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
-                <path d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/>
-              </svg>
-              Unread
-            </div>
-          </button>
-        </li>
-
-        <li class="nav-item" data-tab="sent">
-          <button>
-            <div class="nav-link-group">
-              <svg width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
-                <path d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8"/>
-              </svg>
-              Sent
-            </div>
-          </button>
-        </li>
-
-        <li class="nav-item nav-ai" data-tab="ai-drafts">
-          <button>
-            <div class="nav-link-group">
-              <svg width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
-                <path d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z"/>
-              </svg>
-              AI Drafts
-            </div>
-          </button>
-        </li>
-      </ul>
+    <div class="top-search-wrap">
+      <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+        <path d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/>
+      </svg>
+      <input class="top-search-input" id="search-bar" type="text" placeholder="Search emails..."/>
     </div>
 
-    <div class="sidebar-bottom">
-      <!-- theme toggle -->
-      <button class="sidebar-theme" onclick="toggleTheme()">
-        <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
-          <path d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364-6.364l-.707.707M6.343 17.657l-.707.707m12.728 0l-.707-.707M6.343 6.343l-.707-.707M16 12a4 4 0 11-8 0 4 4 0 018 0z"/>
-        </svg>
-        <span id="theme-label">Dark mode</span>
+    <div class="topbar-right">
+      <button class="theme-toggle" onclick="toggleTheme()" aria-label="Toggle theme">
+        <span class="theme-icon" id="theme-icon">○</span>
+        <span id="theme-label">Dark</span>
       </button>
-
-      <!-- logout -->
-      <div class="logout-btn">
-        <button onclick="window.location.href='/auth/logout'">
-          <div class="nav-link-group">
-            <svg width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
-              <path d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"/>
-            </svg>
-            Logout
-          </div>
-        </button>
-      </div>
-    </div>
-  </aside>
-
-  <!-- ═══ EMAIL LIST ═══ -->
-  <section class="list-panel">
-    <div class="list-header">
-      <h2 class="list-title" id="inbox-title">Inbox</h2>
-      <div class="search-wrap">
-        <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
-          <path d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/>
-        </svg>
-        <input class="search-input" id="search-bar" type="text" placeholder="Search emails..."/>
-      </div>
-    </div>
-    <div class="email-feed" id="email-feed">
-      <div class="feed-state">Loading emails...</div>
-    </div>
-  </section>
-
-  <!-- ═══ PREVIEW PANEL ═══ -->
-  <section class="preview-panel">
-
-    <div class="preview-header">
-      <h3 class="preview-subject" id="view-subject">Select an email to read</h3>
-      <div class="sender-row">
-        <div class="sender-info">
-          <div class="avatar" id="view-avatar">—</div>
-          <div>
-            <div class="sender-name" id="view-sender">No sender selected</div>
-            <div class="sender-meta" id="view-meta"></div>
-          </div>
-        </div>
-        <div class="action-group">
-          <!-- Reply -->
-          <button class="icon-btn" title="Reply">
-            <svg width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
-              <path d="M3 10h10a8 8 0 018 8v2M3 10l6 6m-6-6l6-6"/>
-            </svg>
-          </button>
-          <!-- Bookmark -->
-          <button class="icon-btn" title="Save">
-            <svg width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
-              <path d="M5 5a2 2 0 012-2h10a2 2 0 012 2v16l-7-3.5L5 21V5z"/>
-            </svg>
-          </button>
-          <!-- Delete -->
-          <button class="icon-btn" title="Delete">
-            <svg width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
-              <path d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/>
-            </svg>
-          </button>
-        </div>
-      </div>
-    </div>
-
-    <div class="preview-body" id="view-body">
-      Select an email from the list to read its contents.
-    </div>
-
-    <!-- AI Drawer -->
-    <div class="ai-drawer hidden" id="ai-drawer">
-      <div class="ai-bar">
-        <div class="ai-indicator">
-          <div class="ai-dot"></div>
-          <span class="ai-label">Mailx AI</span>
-        </div>
-        <div class="intent-group">
-          <button class="intent-pill active" data-intent="agree">Agree</button>
-          <button class="intent-pill" data-intent="decline">Decline</button>
-          <button class="intent-pill" data-intent="later">Hold off</button>
-        </div>
-      </div>
-
-      <textarea class="draft-textarea" id="ai-draft-output" placeholder="AI draft loading..."></textarea>
-
-      <div class="draft-actions">
-        <button class="btn-secondary" id="btn-regenerate">
-          <svg width="13" height="13" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
-            <path d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"/>
+      <button onclick="window.location.href='/auth/logout'">
+        <div class="nav-link-group">
+          <svg width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+            <path d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"/>
           </svg>
-          Regenerate
-        </button>
-        <button class="btn-primary" id="btn-send-reply">
-          Send Reply
-          <svg width="13" height="13" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
-            <path d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8"/>
+          Logout
+        </div>
+      </button>
+    </div>
+  </header>
+
+  <div class="app-workspace">
+
+    <!-- ── Sidebar ── -->
+    <div class="sidebar" id="sidebar">
+      
+        
+        <button class="hamburger-toggle" id="hamburger-btn" aria-label="Toggle Navigation">
+          <svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+            <path d="M4 6h16M4 12h16M4 18h16"/>
           </svg>
         </button>
-      </div>
+
+        <ul class="nav-list">
+          <li class="nav-item active" data-tab="inbox">
+            <button>
+              <div class="nav-link-group">
+                <svg width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                  <path d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/>
+                </svg>
+                <span>Inbox</span>
+              </div>
+              <span class="badge-count" id="inbox-badge">0</span>
+            </button>
+          </li>
+
+          <li class="nav-item" data-tab="sent">
+            <button>
+              <div class="nav-link-group">
+                <svg width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                  <path d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8"/>
+                </svg>
+                <span>Sent</span>
+              </div>
+            </button>
+          </li>
+
+          <li class="nav-item" data-tab="archive">
+            <button>
+              <div class="nav-link-group">
+                <svg width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                  <path d="M20 13V6a2 2 0 00-2-2H6a2 2 0 00-2 2v7m16 0a2 2 0 01-2 2H6a2 2 0 01-2-2m16 0h-2.586a1 1 0 00-.707.293l-2.414 2.414a1 1 0 01-.707.293h-3.172a1 1 0 01-.707-.293l-2.414-2.414A1 1 0 006.586 13H4"/>
+                </svg>
+                <span>Archive</span>
+              </div>
+            </button>
+          </li>
+        </ul>
+      
+
+      
     </div>
 
-  </section>
-</div>
+  
+    <main class="content-area state-inbox" id="app-content-area">
 
-<script src="app.js"></script>
-<script>
-  // ── Dark mode ──────────────────────
-  const html = document.documentElement;
-  const label = document.getElementById('theme-label');
+      <!-- s1: Inbox List -->
+      <section class="list-panel">
 
-  const saved = localStorage.getItem('mailx-theme');
-  if (saved) { html.setAttribute('data-theme', saved); updateLabel(saved); }
+        <div class="list-header">
+          <h2 class="list-title" id="inbox-title">Inbox</h2>
+        </div>
 
-  function toggleTheme() {
-    const next = html.getAttribute('data-theme') === 'dark' ? 'light' : 'dark';
-    html.setAttribute('data-theme', next);
-    localStorage.setItem('mailx-theme', next);
-    updateLabel(next);
-  }
+        <div class="email-feed" id="email-feed">
+          <div class="feed-state">Loading emails...</div>
+        </div>
 
-  function updateLabel(t) {
-    label.textContent = t === 'dark' ? 'Light mode' : 'Dark mode';
-  }
-</script>
+      </section>
+
+      <!-- s2: Email Preview + AI Panel -->
+      <section class="preview-panel">
+
+        <!-- left email -->
+        <div class="main-mail-view">
+
+
+          <div class="preview-header">
+            <div class="subject-container-row">
+              <button class="back-arrow-btn" id="go-back-to-inbox" title="Back to Inbox">
+                <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                  <path d="M10 19l-7-7m0 0l7-7m-7 7h18"/>
+                </svg>
+              </button>
+              <h3 class="preview-subject" id="view-subject">Select an email to read</h3>
+            </div>
+
+            <div class="sender-row">
+              <div class="sender-info">
+                <div class="avatar" id="view-avatar">—</div>
+                <div>
+                  <div class="sender-name" id="view-sender">No sender selected</div>
+                  <div class="sender-meta" id="view-meta"></div>
+                </div>
+              </div>
+              <!-- <div class="action-group">
+                <button class="icon-btn" id="reply-btn" title="Reply">
+                  <svg width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                    <path d="M3 10h10a8 8 0 018 8v2M3 10l6 6m-6-6l6-6"/>
+                  </svg>
+                </button>
+                <button class="icon-btn" title="Save">
+                  <svg width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                    <path d="M5 5a2 2 0 012-2h10a2 2 0 012 2v16l-7-3.5L5 21V5z"/>
+                  </svg>
+                </button>
+                <button class="icon-btn" title="Delete">
+                  <svg width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                    <path d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/>
+                  </svg>
+                </button>
+              </div> -->
+            </div>
+          </div>
+
+          <!-- Email body + reply drawer -->
+          <div class="preview-body" id="view-body-scroll-context">
+
+            <div id="view-body">
+              Select an email from the list to read its contents.
+            </div>
+
+            <!-- Reply drawer-->
+            <div class="inline-reply-container hidden" id="ai-drawer">
+
+              <div class="reply-toolbar">
+                <div class="ai-indicator">
+                  <div class="ai-dot"></div>
+                  <span class="ai-label">AI Generated Reply</span>
+                </div>
+                <div class="tone-group">
+                  <span class="tone-label">Tone</span>
+                  <select class="tone-select" id="tone-select">
+                    <option value="Professional">Professional</option>
+                    <option value="Casual">Casual</option>
+                    <option value="Friendly">Friendly</option>
+                  </select>
+                </div>
+                <button class="btn-secondary" id="close-reply">Close</button>
+              </div>
+
+              <textarea class="draft-textarea" id="ai-draft-output" placeholder="AI draft loading..."></textarea>
+
+              <div class="draft-actions">
+                <button class="btn-secondary" id="btn-regenerate">
+                  <svg width="13" height="13" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                    <path d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"/>
+                  </svg>
+                  Regenerate
+                </button>
+                <button class="btn-primary" id="btn-send-reply">
+                  Send Reply
+                  <svg width="13" height="13" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                    <path d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8"/>
+                  </svg>
+                </button>
+              </div>
+
+            </div>
+            
+          </div>
+        </div>
+
+        <!-- Right: AI Summary Panel — always visible in email view -->
+        <aside class="summary-panel">
+          <div class="summary-card">
+            <div class="ai-indicator">
+              <div class="ai-dot"></div>
+              <span class="ai-label">Mailx AI</span>
+            </div>
+            <h4>Summary</h4>
+            <div id="ai-summary">Open an email to generate a summary.</div>
+          </div>
+
+          <div class="summary-actions">
+            <button class="action-card" id="reply-action">
+              <strong>↩ Reply</strong>
+              <span>Respond to this email</span>
+            </button>
+            <button class="action-card">
+              <strong>🗄 Archive</strong>
+              <span>Save for later</span>
+            </button>
+            <button class="action-card delete">
+              <strong>🗑 Delete</strong>
+              <span>Remove this email</span>
+            </button>
+          </div>
+        </aside>
+
+      </section>
+
+    </main>
+  </div>
+
+  <script src="app.js"></script>
+  <script>
+    // ── Dark mode ──
+    const html = document.documentElement;
+    const themeIcon = document.getElementById('theme-icon');
+    const themeLabel = document.getElementById('theme-label');
+
+    const saved = localStorage.getItem('mailx-theme');
+    if (saved) { html.setAttribute('data-theme', saved); updateThemeUI(saved); }
+
+    function toggleTheme() {
+      const next = html.getAttribute('data-theme') === 'dark' ? 'light' : 'dark';
+      html.setAttribute('data-theme', next);
+      localStorage.setItem('mailx-theme', next);
+      updateThemeUI(next);
+    }
+
+    function updateThemeUI(t) {
+      themeIcon.textContent = t === 'dark' ? '●' : '○';
+      themeLabel.textContent = t === 'dark' ? 'Light' : 'Dark';
+    }
+  </script>
 
 </body>
 </html>
