@@ -149,13 +149,32 @@ async function selectEmail(emailId) {
 }
 
 // ── Simple Summary (truncate for now, API later) ──────────
-function generateSummary(emailBody) {
+// ── AI Summary (Gemini API) ───────────────────────────────
+async function generateSummary(emailBody) {
   const summaryBox = document.getElementById("ai-summary");
   if (!summaryBox) return;
-  const trimmed = (emailBody || "").replace(/\n/g, " ").trim();
-  summaryBox.textContent = trimmed.length > 200
-    ? trimmed.substring(0, 200) + "..."
-    : trimmed || "No content to summarize.";
+
+  if (!emailBody || !emailBody.trim()) {
+    summaryBox.textContent = "No content to summarize.";
+    return;
+  }
+
+  summaryBox.textContent = "✨ Summarizing...";
+
+  try {
+    const res = await fetch("/ai/summary", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ emailBody })
+    });
+
+    const data = await res.json();
+    summaryBox.textContent = data.summary || "Could not generate summary.";
+
+  } catch (error) {
+    console.error("❌ Summary generation failed:", error);
+    summaryBox.textContent = "Failed to generate summary.";
+  }
 }
 
 // ── Generate AI Draft (Gemini API) ───────────────────────

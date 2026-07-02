@@ -175,7 +175,7 @@
     }
 
     .content-area.state-single {
-      grid-template-columns: 1fr 300px;
+      grid-template-columns: 1fr;
     }
     .content-area.state-single .list-panel {
       display: none !important;
@@ -270,7 +270,7 @@
     /* ── Single Email Panel View State ── */
 .preview-panel {
      
-      grid-template-columns: auto 1fr;
+      grid-template-columns: 1.3fr 0.5fr;
       background: var(--surface);
     }
 
@@ -383,9 +383,12 @@
       font-size: 0.92rem;
       line-height: 1.8;
       color: #202124;
-      white-space: pre-wrap;
+      /* white-space: pre-wrap; */
       word-break: break-word;
       min-height: 180px;
+      display: flex;
+    flex-direction: column;
+    align-items: center;
     }
 
     [data-theme="dark"] .email-content-box {
